@@ -3,6 +3,9 @@ import {Route, Switch} from 'react-router-dom';
 import List from "./List";
 import Form from "./Form";
 import Register from './Register';
+import Login from './Login';
+import Nav from './Navbar';
+import Home from './Home';
 
 //Create a Main Component
 class Main extends Component {
@@ -11,13 +14,10 @@ class Main extends Component {
         return(
             <div>
                 {/*Render Different Component based on Route*/}
-                <Route path="/users" render={props =>
-                  <div>
-                    <List />
-                    <Form />
-                  </div>
-                  } />
+                <Route path="/" component={Nav}/>
+                <Route path="/home" component={Home}/>
                 <Route path="/users/register" component={Register}/>
+                <Route path="/users/login" component={Login}/>
     
                 
             </div>

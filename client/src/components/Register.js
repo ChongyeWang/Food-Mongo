@@ -107,11 +107,6 @@ class Register extends Component{
             console.log("1111111error");
         })
         
-        
-       
-        
-        
-
         // const content = rawResponse.json();
         // console.log(111)
         // console.log(content);

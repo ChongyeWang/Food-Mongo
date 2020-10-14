@@ -22,7 +22,15 @@ app.use(cookieParser());
 
 var mongoose = require('mongoose');
 var secrets = require('./config/secrets');
-mongoose.connect(secrets.mongo_connection,  { useNewUrlParser: true });
+var options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    poolSize: 500,
+    bufferMaxEntries: 0
+};
+
+
+mongoose.connect(secrets.mongo_connection, options);
 const User = require("./models/user.js");
 
 

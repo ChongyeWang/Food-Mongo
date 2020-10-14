@@ -1,0 +1,29 @@
+import React, {Component} from 'react';
+import cookie from 'react-cookies';
+import {Redirect} from 'react-router';
+import axios from 'axios';
+import logo from '../public/home.jpg';
+import './css/Home.css';
+import {Link} from 'react-router-dom';
+
+class Home extends Component {
+
+    
+    render(){
+
+        return(
+            <div>
+
+                <div >
+                  <img class="logo" src={logo} alt="Logo" style={{width:'100%'}}/>    
+                  <div class="centered"><a><Link to="/users/login" style={{color:'black'}}>Login as a customer</Link></a></div>
+
+                </div>
+
+               
+            </div> 
+        )
+    }
+}
+//export Home Component
+export default Home;
