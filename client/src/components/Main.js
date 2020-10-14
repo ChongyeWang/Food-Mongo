@@ -11,13 +11,13 @@ class Main extends Component {
         return(
             <div>
                 {/*Render Different Component based on Route*/}
-                <Route path="/test" render={props =>
+                <Route path="/users" render={props =>
                   <div>
                     <List />
                     <Form />
                   </div>
                   } />
-                <Route path="/register" component={Register}/>
+                <Route path="/users/register" component={Register}/>
     
                 
             </div>
