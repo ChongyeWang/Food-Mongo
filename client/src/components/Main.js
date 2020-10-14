@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Route, Switch} from 'react-router-dom';
 import List from "./List";
 import Form from "./Form";
+import Register from './Register';
 
 //Create a Main Component
 class Main extends Component {
@@ -16,6 +17,7 @@ class Main extends Component {
                     <Form />
                   </div>
                   } />
+                <Route path="/register" component={Register}/>
     
                 
             </div>

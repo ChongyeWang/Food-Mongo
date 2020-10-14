@@ -17,6 +17,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 
+var mongoose = require('mongoose');
+var secrets = require('./config/secrets');
+mongoose.connect(secrets.mongo_connection,  { useNewUrlParser: true });
+const User = require("./models/user.js");
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 

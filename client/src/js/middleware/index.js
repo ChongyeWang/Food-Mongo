@@ -1,4 +1,6 @@
 import { ADD_BOOK } from "../constants/action-types";
+import { REGISTER_USER } from "../constants/action-types";
+
 const forbiddenWords = ["HarryPotter","LordOfRings","Ulysses"];
 export function forbiddenWordsMiddleware({ dispatch }) {
   return function(next) {
@@ -12,6 +14,7 @@ export function forbiddenWordsMiddleware({ dispatch }) {
           return dispatch({ type: "FOUND_BAD_WORD" });
         }
       }
+
       return next(action);
     };
   };

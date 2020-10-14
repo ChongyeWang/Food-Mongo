@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import List from "./components/List";
 import Form from "./components/Form";
+import './App.css';
 
 import Main from './components/Main';
 import {BrowserRouter} from 'react-router-dom';
