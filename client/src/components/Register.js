@@ -102,9 +102,12 @@ class Register extends Component{
         .then(response => response.json())
         .then(data => {
           console.log('Success:', data);
+          this.setState({
+            authFlag: true
+        });
         })
         .catch((error) => {
-            console.log("1111111error");
+            console.log("error");
         })
         
         // const content = rawResponse.json();
@@ -116,7 +119,7 @@ class Register extends Component{
     render(){ 
         let redirectVar = null;
          if (this.state.authFlag === true) {
-            redirectVar = <Redirect to= "/home"/>;
+            redirectVar = <Redirect to= "/users/login"/>;
         }
         let message = "New User Register.";
         console.log(this.state.message);
@@ -159,6 +162,8 @@ class Register extends Component{
                                 <button onClick = {this.submitLogin} class="btn btn-primary">Register</button>                 
                         </div>
                         <p>{message}</p>
+
+                        <a href={'/restaurant/register'}><h4>Open a New Restaurant</h4></a>
                     </div>
                 </div>
             </div>

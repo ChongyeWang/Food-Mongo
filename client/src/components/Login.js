@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-
-import axios from 'axios';
 import { Redirect } from 'react-router';
 import jwt_decode from "jwt-decode";
 
@@ -44,6 +42,7 @@ class Login extends Component {
     //submit Login handler to send a request to the node backend
     submitLogin = (e) => {
         //prevent page from refresh
+        console.log(1212)
         e.preventDefault();
         const data = {
             username: this.state.username,
@@ -71,11 +70,26 @@ class Login extends Component {
             console.log(error);
         })
 
+        // axios.post('https://localhost:5000/users/login',data)
+        //     .then(response => {
+        //         console.log("Status Code : ",response.status);
+        //         if(response.status === 200){
+        //             console.log(1111);
+        //         }
+
+        //         else{
+        //             console.log(222);
+        //         }
+        //     });
+
     }
 
     render() {
         //redirect based on successful login
         let redirectVar = null;
+        if(this.state.authFlag === true){
+            redirectVar = <Redirect to= "/home"/>;
+        }
         if (this.state.token.length > 0) {
             localStorage.setItem("token", this.state.token);
 
@@ -86,7 +100,7 @@ class Login extends Component {
             console.log(decoded._id)
             console.log(decoded.username)
             
-            // redirectVar = <Redirect to="/home" />
+            redirectVar = <Redirect to="/home" />
         }
         return (
             <div>

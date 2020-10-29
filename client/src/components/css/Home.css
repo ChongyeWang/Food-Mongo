@@ -2,7 +2,7 @@
 
 .centered {
   position: absolute;
-  top: 35%;
+  top: 30%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 40px;
@@ -49,4 +49,23 @@
 
 .logo {
   opacity: 0.4;
+}
+
+
+.second {
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.third {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  font-weight: bold;
 }
