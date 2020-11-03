@@ -2,11 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 
-
 //Define a Login Component
 class RestaurantPage extends Component{
-
-
     constructor(){
         super();
         this.state = {
@@ -15,45 +12,32 @@ class RestaurantPage extends Component{
             phone: "",
             location: [],
             dish: [],
-            // review: "",
-            // reviews: [],
-            // selectItems : [],
-            // delivery : false,
-            file : null
+            order: [],
+            file : null,
+            currentPage: 1,
+            todosPerPage: 3,
+            search: [],
         }
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
-
+        this.handleClick = this.handleClick.bind(this);
     }  
 
     //get the data from backend  
     componentDidMount(){
         var id = localStorage.getItem("restaurant_id");
         var username = localStorage.getItem("restaurant_username");
-        // axios.get('http://localhost:5000/restaurant/profile',  {mode:'cors', credentials: 'include'})
-        //     .then((response) => {
-        //     //update the state with the response data
-    
-        //     console.log(response.data);
-
-        //     this.setState({
-        //         name: response.data.user,
-        //         email: response.data.email,
-        //         location: response.data.location,
-        //         dish: response.data.dish,
-        //         reviews: response.data.review
-        //     });
-        // });
         fetch('/restaurant/profile/' + id)
         .then(response => response.json())
         .then(data => {
-            // console.log('Success:', data);
+         console.log('Success:', data);
           this.setState({
               name: data.data.name,
               email: data.data.email,
               phone: data.data.phone,
               location: data.data.location,
               dish: data.data.dish,
+              order: data.data.order
           });
 
         })
@@ -61,89 +45,27 @@ class RestaurantPage extends Component{
             console.log(error);
         })
 
-        // fetch('/restaurant/profile', {
-        //     method: 'GET',
-        //     headers: { 'Content-Type': 'application/json'}})
-        // .then((response) => response.json())
-        // .then((data) => console.log('This is your data'));
-
-        // fetch('/restaurant/page')
-        //   .then(response => response.json())
-        //   .then(data => {
-        //       // console.log('Success:', data);
-        //     //   this.setState({
-        //     //       token: data.token,
-        //     //       authFlag: true
-        //     //   });
-        //     //   console.log(data.token);
-        //   })
-        //   .catch((error) => {
-        //       console.log(error);
-        //   })
+    }
+    handleClick(event) {
+        this.setState({
+            currentPage: Number(event.target.id)
+        });
     }
 
-    // contentChangeHandler = (e) => {
-    //     e.preventDefault();
-    //     this.setState({
-    //         review : e.target.value
-    //     })
-    // }
+    submitEvent = (id) => {
+        console.log(id);
+        const data = {
+            restaurantId : localStorage.getItem("restaurant_id"),
+            orderId : id
+        }
 
-
-    // selectChangeHandler = (e) => {
-    //     e.preventDefault();
-    //     this.setState({
-    //         selectItems:[...this.state.selectItems, e.target.value]
-    //     })
-    //     console.log(this.state.selectItems);
-    // }
-
-
-    // submitReview = (e) => {
-    //     e.preventDefault();
-    //     const data = {
-    //         content : this.state.review,
-    //     }
-    //     //set the with credentials to true
-    //     // axios.defaults.withCredentials = true;
-
-    //     // var id = this.props.match.params.id;
-    //     // axios.post(`http://localhost:3001/restaurant/${id}/review`,data)
-    //     //     .then(response => {
-    //     //         console.log("Status Code : ",response.status);
-    //     // })
-
-    // }
-    
-
-    // delivery = (e) => {
-    //     this.setState({
-    //         delivery: true
-    //     })
-    // }
-
-    // pickUp = (e) => {
-    //     this.setState({
-    //         delivery: false
-    //     })
-    // }
-
-    // placeOrder = (e) => {
-    //     e.preventDefault();
-    //     const data = {
-    //         delivery : this.state.delivery,
-    //         selectItems : this.state.selectItems
-    //     }
-    //     //set the with credentials to true
-    //     // axios.defaults.withCredentials = true;
-
-    //     var id = this.props.match.params.id;
-    //     // axios.post(`http://localhost:3001/restaurant/${id}/place_order`,data)
-    //     //     .then(response => {
-    //     //         console.log("Status Code : ",response.status);
-    //     // })
-    // }
-
+        axios.defaults.withCredentials = true;
+      
+        axios.post('/restaurant/update_order', data)
+            .then(response => {
+                alert("Order Placed!");
+            })
+      }
 
     onChange(e) {
         var orig = e.target.files[0];
@@ -170,6 +92,22 @@ class RestaurantPage extends Component{
         });
     }
 
+    KeyChangeHandler = (e) => {
+      const data = {
+          id : localStorage.getItem("restaurant_id"),
+          keyword : e.target.value,
+      }
+    
+      axios.post('/restaurant/search', data)
+      .then(response => {
+        this.setState({
+            search: response.data
+
+        });
+      }) 
+
+    }
+
 
     render(){
         var name = this.state.name;
@@ -179,6 +117,16 @@ class RestaurantPage extends Component{
 
         var id = localStorage.getItem("restaurant_id");
         var dish = this.state.dish;
+        var search = this.state.search;
+
+        const serachItems = search.map((d) => 
+        <li key={d.userId}>
+            <a href={'/users/profile/' + d.userId}>View user profile</a>
+            <span style={{display:'inline-block', width: '50px'}}></span> 
+            {d.content}$
+            <span style={{display:'inline-block', width: '50px'}}></span>   
+            {d.status}
+        </li>);
 
         const dishItems = dish.map((d) => 
         <li key={d.name}>{d.name} 
@@ -187,16 +135,6 @@ class RestaurantPage extends Component{
             <span style={{display:'inline-block', width: '50px'}}></span>   
             {d.category}
         </li>);
-    //     var dish = this.state.dish;
-    //     var reviews = this.state.reviews;
-    //     const dishItems = dish.map((d) => <li key={d.name}>{d.name} <span style={{display:'inline-block', width: '50px'}}></span> {d.price}$<span style={{display:'inline-block', width: '50px'}}></span>   {d.category}</li>);
-    //     const reviewItems = reviews.map((d) => <li key={d.date}>{d.date}<span style={{display:'inline-block', width: '50px'}}></span>{d.content}</li>);
-    //     var id = this.props.match.params.id;
-
-
-    //     const selectItems = dish.map((d) => 
-    //         <option value={d.name}>Name:{d.name} Price:{d.price}$ Category:{d.category}</option>);
-
 
         var image;
         try {
@@ -210,6 +148,45 @@ class RestaurantPage extends Component{
             image = images('./' + 'IMAGE-restaurant-default' + '.png');
         }
 
+        var dish = this.state.dish;
+        var order = this.state.order;
+        var id = this.props.match.params.id;
+        var currentPage = this.state.currentPage;
+        var todosPerPage = this.state.todosPerPage;
+
+        const indexOfLastTodo = currentPage * todosPerPage;
+        const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+        const currentTodos = order.slice(indexOfFirstTodo, indexOfLastTodo);
+
+        const renderTodos = currentTodos.map((d, index) => {
+            return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>
+            <a href={'/users/profile/' + d.userId}>View user profile</a>
+            <span style={{display:'inline-block', width: '50px'}}></span> 
+            {d.content}$
+            <span style={{display:'inline-block', width: '50px'}}></span>   
+            {d.status}
+            <span style={{marginRight: '20px'}}></span>
+            <button onClick = {() => {this.submitEvent(d._id)}} class="btn btn-primary">Update Status</button> 
+            </li>;
+            
+          });
+
+          const pageNumbers = [];
+          for (let i = 1; i <= Math.ceil(order.length / todosPerPage); i++) {
+              pageNumbers.push(i);
+          }
+  
+          const renderPageNumbers = pageNumbers.map(number => {
+              return (
+                <li style={{display : 'inline-block', width: '50px', fontSize: '20px', fontWeight: 'bold'}} 
+                  key={number}
+                  id={number}
+                  onClick={this.handleClick}
+                >
+                  {number}
+                </li>
+              );
+            });
 
         return(
             <div>
@@ -217,10 +194,8 @@ class RestaurantPage extends Component{
 
                     <div class="column" style={{width: "30%"}}>
                         <img src={image} alt="Logo" style={{width:'150px'}}/> 
-                        </div>    
+                    </div>    
   
-
-                        
                     <form onSubmit={this.onFormSubmit}>
                         <h3>Update Profile Picture</h3>
                         <input type="file" name="myImage" onChange= {this.onChange} />
@@ -229,15 +204,37 @@ class RestaurantPage extends Component{
 
                     <h3><a href={'/restaurant/edit'}>Edit Profile Information</a></h3>
                     <h3><a href={'/restaurant/add-dish'}>Add Dish</a></h3>
+                    <h3><a href={'/add_event'}>Add Event</a></h3>
 
                     <h3>Restaurant Name : {name}</h3>
                     <h3>Email : {email}</h3>
                     <h3>Phone : {phone}</h3>
                     <h3>Address : {location}</h3>
-                    <h3>All Dishes: </h3>
+                    <h3 style={{fontWeight: 'bold'}}>All Dishes: </h3>
                     <h3>{dishItems}</h3>
+
+                    <div>
+                        <h3 style={{fontWeight: 'bold'}}>All Orders</h3>
+                        <ul>
+                        {renderTodos}
+                        </ul>
+                        <ul id="page-numbers" style={{display : 'inline-block', color: 'blue'}} >
+                        {renderPageNumbers}
+                        </ul>
+                    </div>
+
+                    <div class="" style={{marginTop:'30px', width:'300px'}}>
+                        <h3 style={{fontWeight: 'bold'}}>Search Order</h3>
+                        <div class="panel">
+                        </div>
+                        <div class="form-group">
+                            <input onChange = {this.KeyChangeHandler} type="text" class="form-control" name="key" placeholder="Search Order"/>
+                        </div> 
+                        
+                    </div>
+                    <h3>{serachItems}</h3>          
+
                 </div>  
-             
             </div> 
 
 

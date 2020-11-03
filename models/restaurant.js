@@ -19,6 +19,13 @@ var RestaurantSchema = new mongoose.Schema({
           price: { type: String },
         }
     ],
+    order: [
+      {
+        userId: { type: String },
+        content: { type: String },
+        status: { type: String },
+      }
+    ],
 
     review: [
         {

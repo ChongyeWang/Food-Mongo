@@ -4,7 +4,7 @@ import {Redirect} from 'react-router';
 
 
 //Define a Login Component
-class UserPage extends Component{
+class UserProfile extends Component{
     constructor(){
         super();
         this.state = {
@@ -15,9 +15,7 @@ class UserPage extends Component{
             address: "",
             file : null
         }
-        this.onFormSubmit = this.onFormSubmit.bind(this);
-        this.onChange = this.onChange.bind(this);
-
+        this.follow = this.follow.bind(this);
     }  
 
     //get the data from backend  
@@ -26,7 +24,6 @@ class UserPage extends Component{
         fetch('/users/profile/' + id)
         .then(response => response.json())
         .then(data => {
-            // console.log('Success:', data);
           this.setState({
               name: data.data.name,
               email: data.data.email,
@@ -41,9 +38,10 @@ class UserPage extends Component{
         })
     }
 
+
     onChange(e) {
         var orig = e.target.files[0];
-        var id = localStorage.getItem("user_id");
+        var id = this.props.match.params.id;
         var renamedFile = new File([orig], 'user-' + id + '.png', {type: orig.type});
         console.log(renamedFile);
         this.setState({file:renamedFile});
@@ -66,6 +64,21 @@ class UserPage extends Component{
         });
     }
 
+    follow(e){
+        e.preventDefault();
+        const data = {
+            targetId: this.props.match.params.id,
+            userId : localStorage.getItem("user_id")
+        }
+       
+
+        axios.post("/users/follow", data)
+            .then((response) => {
+                alert("Followed!");
+                console.log(response.data);
+            }).catch((error) => {
+        });
+    }
 
     render(){
         var name = this.state.name;
@@ -74,7 +87,7 @@ class UserPage extends Component{
         var things = this.state.things;
         var address = this.state.address;
 
-        var id = localStorage.getItem("user_id");
+        var id = this.props.match.params.id;
 
         var image;
         try {
@@ -88,37 +101,25 @@ class UserPage extends Component{
             image = images('./' + 'IMAGE-user-default' + '.png');
         }
 
-
         return(
             <div>
                 <div style={{marginLeft: '110px', marginTop: '10px'}}>
 
                     <div class="column" style={{width: "30%"}}>
                         <img src={image} alt="Logo" style={{width:'150px'}}/> 
-                        </div>    
-  
-                    <form onSubmit={this.onFormSubmit}>
-                        <h3>Update Profile Picture</h3>
-                        <input type="file" name="myImage" onChange= {this.onChange} />
-                        <button type="submit">Upload</button>
-                    </form>
+                    </div>    
 
-                    <h3><a href={'/users/edit'}>Edit Profile Information</a></h3>
+                    <button onClick = {this.follow} class="btn btn-primary">Follow</button> 
 
                     <h3>Userame : {name}</h3>
                     <h3>Email : {email}</h3>
                     <h3>Phone : {phone}</h3>
                     <h3>Address : {address}</h3>
                     <h3>Things Love : {things}</h3>
-
                 </div>  
-             
             </div> 
-
-
         )
     }   
 }
 
-
-export default UserPage;
+export default UserProfile;

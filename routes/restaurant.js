@@ -8,8 +8,8 @@ const { auth } = require("../config/passport2.js");
 auth();
 
 
-/* GET users listing. */
 const Restaurant = require("../models/restaurant.js");
+const User = require(".././models/user.js");
 
 const upload = multer({
 	storage: multer.diskStorage({
@@ -103,7 +103,9 @@ router.get('/profile/:id', (req, res) => {
 				'email': user.email,
 				'phone': user.phone,
 				'location': user.location,
-				'dish': user.dish
+				'dish': user.dish,
+				'order': user.order,
+				'review': user.review
             }
 			res.send({message: "ok", data: data});
 			console.log("Restaurant found");
@@ -176,5 +178,138 @@ router.post('/edit', (req, res) => {
 	) 
 });
 
+router.post('/place_order', (req, res) => {
+	
+	var userId = req.body.userId;
+	var restaurantId = req.body.restaurantId;
+	var order = req.body.order;
+
+	console.log(userId);
+	console.log(restaurantId);
+	console.log(order);
+    Restaurant.update(
+		{ _id: restaurantId },
+		{ 
+			$push: 
+			{ 
+				order: {"userId": userId, "content": order, "status": "Pending"}
+				
+			} 
+		},
+		function( err, result ) {
+			if ( err ) res.status(500).end("Error Occured");
+			else {
+				res.send({message: "ok"});
+			}
+		}
+		
+	) ;
+
+});
+
+
+router.post('/update_order', (req, res) => {
+	var orderId = req.body.orderId;
+	var restaurantId = req.body.restaurantId;
+
+	console.log(orderId);
+	console.log(restaurantId);
+
+    Restaurant.update(
+		{ _id: restaurantId, "order._id" : orderId},
+		{$set : {"order.$.status" : "Delivered"}},
+
+		function( err, result ) {
+			if ( err ) res.status(500).end("Error Occured");
+			else {
+				res.send({message: "ok"});
+			}
+		}
+	) 
+});
+
+router.post('/search', function(req, res, next) {
+	let keyword = req.body.keyword;
+	let restaurantId = req.body.id;
+	Restaurant.find(
+		{ _id: restaurantId}, 
+		function(err, result) {
+			if ( err ) res.status(500).end("Error Occured");
+			else {
+
+				let orders = [];
+				for (var i = 0; i < result[0].order.length; i++) {
+					if (result[0].order[i].status.includes(keyword)) {
+						orders.push(result[0].order[i])
+					}
+				}
+				res.send(JSON.stringify(orders));
+			}
+		}
+			
+	)
+});
+
+
+router.post('/search-all', function(req, res, next) {
+	let keyword = req.body.keyword;
+	Restaurant.find({},
+		function(err, result) {
+			if ( err ) res.status(500).end("Error Occured");
+			else {
+				let restaurant = [];
+				for (var i = 0; i < result.length; i++) {
+					if (result[i].name.includes(keyword)) {
+						restaurant.push(result[i]);
+						continue;
+					}
+					if (result[i].location.includes(keyword)) {
+						restaurant.push(result[i]);
+						continue;
+					}
+					for (var j = 0; j < result[i].dish.length; j++) {
+						if (result[i].dish[j].name.includes(keyword)) {
+							restaurant.push(result[i]);
+							break;
+						}
+					}
+				}
+				res.send(JSON.stringify(restaurant));
+			}
+		}
+			
+	)
+});
+
+
+router.post('/add_review', (req, res) => {
+	
+	var restaurantId = req.body.restaurantId;
+	var review = req.body.review;
+
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+	var yyyy = today.getFullYear();
+
+	today = mm + '/' + dd + '/' + yyyy;
+
+    Restaurant.update(
+		{ _id: restaurantId },
+		{ 
+			$push: 
+			{ 
+				review: {"content": review, "date": today}
+				
+			} 
+		},
+		function( err, result ) {
+			if ( err ) res.status(500).end("Error Occured");
+			else {
+				res.send({message: "ok"});
+			}
+		}
+	) ;
+});
 
 module.exports = router;

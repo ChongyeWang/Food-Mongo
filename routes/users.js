@@ -21,14 +21,32 @@ const upload = multer({
 
 module.exports = (app,producer,kafka_topic) => {
 
-    // app.get('/', function(req, res, next) {
+    app.get('/users/all', function(req, res, next) {
 
-    //     User.find({}, function(err, users) {
-    //         console.log(users);
-    //         res.send(JSON.stringify({ x: 5, y: 6 }));
+
+        let payload = [{
+            topic : kafka_topic,
+            messages : JSON.stringify({
+                type : "DELETE_USER_POST",
+                data : {'a':1}
+            })
+        }]
+
+        producer.send(payload,(err,data) => {
+            if(err) {
+                console.log('[kafka-producer -> '+kafka_topic+']: broker update failed')
+            }
+    
+            console.log('[kafka-producer -> '+kafka_topic+']: broker update success');
+        })
+
+
+        User.find({}, function(err, users) {
+            console.log(users);
+            res.send(JSON.stringify(users));
             
-    //     });
-    // });
+        });
+    });
 
     app.post('/users/register', function(req, res, next) {
         console.log(req.body);
@@ -51,6 +69,10 @@ module.exports = (app,producer,kafka_topic) => {
                         username: req.body.username,
                         password: req.body.password,
                         email: req.body.email,
+                        phone: req.body.phone,
+                        web: req.body.web,
+                        things: req.body.like,
+                        address: req.body.address,
                     });
 
                     user.save();
@@ -146,8 +168,82 @@ module.exports = (app,producer,kafka_topic) => {
                 return res.send(200).end();
          });
     });
-    
 
+
+    app.post('/users/search', function(req, res, next) {
+        let keyword = req.body.keyword;
+        User.find({},
+            function(err, result) {
+                if ( err ) res.status(500).end("Error Occured");
+                else {
+                    if (keyword === undefined || keyword.length === 0) {
+                        res.send(JSON.stringify(result));
+                    }
+                    else {
+                        let users = [];
+                        for (var i = 0; i < result.length; i++) {
+                            if (result[i].username.includes(keyword)) {
+                                users.push(result[i]);
+                                continue;
+                            }
+                            if (result[i].address.includes(keyword)) {
+                                users.push(result[i]);
+                                continue;
+                            }
+                        }
+                        res.send(JSON.stringify(users));
+                    }
+                    
+                }
+            }      
+        )
+    });
+
+
+    app.post('/users/follow', function(req, res, next) {
+        var userId = req.body.userId;
+        var targetId = req.body.targetId;
+
+        User.update(
+            { _id: userId },
+            { 
+                $push: 
+                { 
+                    following: targetId
+                    
+                } 
+            },
+            function( err, result ) {
+                if ( err ) res.status(500).end("Error Occured");
+                else {
+                    res.send({message: "ok"});
+                }
+            }
+        ) ;
+    });
+
+    app.post('/users/show', function(req, res, next) {
+        var userId = req.body.userId;
+
+        User.find(
+            { _id: userId },
+            function( err, result ) {
+                if ( err ) res.status(500).end("Error Occured");
+                else {
+                    var following = result[0].following;
+                    User.find(
+                        { _id: { $in : following } },
+                        function( err, result ) {
+                            if ( err ) res.status(500).end("Error Occured");
+                            else {
+                                res.send(JSON.stringify(result));
+                            }
+                        }
+                    ) ; 
+                }
+            }
+        ) ;
+    });
 }
 
 

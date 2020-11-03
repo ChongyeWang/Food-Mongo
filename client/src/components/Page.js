@@ -13,14 +13,23 @@ class Page extends Component{
             phone: "",
             location: [],
             dish: [],
-            // review: "",
-            // reviews: [],
-            // selectItems : [],
-            // delivery : false,
-            file : null
-        }
+            file : null,
+            currentPage: 1,
+            todosPerPage: 3,
+            review: "",
+            reviews: []
 
+        }
+        this.handleClick = this.handleClick.bind(this);
+        this.placeOrder = this.placeOrder.bind(this);
     }  
+
+    handleClick(event) {
+        this.setState({
+            currentPage: Number(event.target.id)
+        });
+    }
+    
 
     //get the data from backend  
     componentDidMount(){
@@ -35,7 +44,7 @@ class Page extends Component{
               phone: data.data.phone,
               location: data.data.phone,
               dish: data.data.dish,
-
+              reviews: data.data.review,
           });
 
         })
@@ -44,70 +53,49 @@ class Page extends Component{
         })
 
     }
+    submitEvent = (id) => {
+        if (localStorage.getItem('order') == null) {
+            localStorage.setItem('order', id);
+        }
+        else {
+            localStorage.setItem('order', localStorage.getItem('order').concat(",").concat(id));
+        }
+      }
 
-    // contentChangeHandler = (e) => {
-    //     e.preventDefault();
-    //     this.setState({
-    //         review : e.target.value
-    //     })
-    // }
+    placeOrder(e) {
+    var restaurant_id = this.props.match.params.id;
+    console.log(localStorage.getItem("order"));
+    const data = {
+        userId : localStorage.getItem("user_id"),
+        restaurantId : restaurant_id,
+        order: localStorage.getItem("order"),
+    }
 
-
-    // selectChangeHandler = (e) => {
-    //     e.preventDefault();
-    //     this.setState({
-    //         selectItems:[...this.state.selectItems, e.target.value]
-    //     })
-    //     console.log(this.state.selectItems);
-    // }
-
-
-    // submitReview = (e) => {
-    //     e.preventDefault();
-    //     const data = {
-    //         content : this.state.review,
-    //     }
-    //     //set the with credentials to true
-    //     // axios.defaults.withCredentials = true;
-
-    //     // var id = this.props.match.params.id;
-    //     // axios.post(`http://localhost:3001/restaurant/${id}/review`,data)
-    //     //     .then(response => {
-    //     //         console.log("Status Code : ",response.status);
-    //     // })
-
-    // }
+    axios.defaults.withCredentials = true;
     
+    axios.post('/restaurant/place_order', data)
+        .then(response => {
+            alert("Order Placed!");
+        })
+    }
 
-    // delivery = (e) => {
-    //     this.setState({
-    //         delivery: true
-    //     })
-    // }
+    reviewChangeHandler = (e) => {
+        this.setState({
+            review : e.target.value
+        })
+    }
 
-    // pickUp = (e) => {
-    //     this.setState({
-    //         delivery: false
-    //     })
-    // }
-
-    // placeOrder = (e) => {
-    //     e.preventDefault();
-    //     const data = {
-    //         delivery : this.state.delivery,
-    //         selectItems : this.state.selectItems
-    //     }
-    //     //set the with credentials to true
-    //     // axios.defaults.withCredentials = true;
-
-    //     var id = this.props.match.params.id;
-    //     // axios.post(`http://localhost:3001/restaurant/${id}/place_order`,data)
-    //     //     .then(response => {
-    //     //         console.log("Status Code : ",response.status);
-    //     // })
-    // }
-
-
+    addReview = (e) => {
+        const data = {
+            restaurantId: this.props.match.params.id,
+            userId: localStorage.getItem("user_id"),
+            review: this.state.review
+        }
+        axios.post('/restaurant/add_review', data)
+        .then(response => {
+            alert("Review Added!");
+        })
+    }
 
 
     render(){
@@ -119,35 +107,62 @@ class Page extends Component{
 
         var id = this.props.match.params.id;
 
-        const dishItems = dish.map((d) => 
-        <li key={d.name}>{d.name} 
+        var currentPage = this.state.currentPage;
+        var todosPerPage = this.state.todosPerPage;
+
+        var reviews = this.state.reviews;
+
+        var reviewItems = reviews.map((d, index) => {
+            return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>{d.content} 
+            <span style={{display:'inline-block', width: '50px'}}></span> 
+            {d.date}          
+            </li>;
+            
+          });
+
+        const indexOfLastTodo = currentPage * todosPerPage;
+        const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+        const currentTodos = dish.slice(indexOfFirstTodo, indexOfLastTodo);
+
+        const renderTodos = currentTodos.map((d, index) => {
+            return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>{d.name} 
             <span style={{display:'inline-block', width: '50px'}}></span> 
             {d.price}$
             <span style={{display:'inline-block', width: '50px'}}></span>   
             {d.category}
-        </li>);
+            <span style={{marginRight: '20px'}}></span>
+            <button onClick = {() => {this.submitEvent(d.name)}} class="btn btn-primary">Add</button> 
+            </li>;
+            
+          });
+      
 
-        console.log(dishItems)
-    //     var dish = this.state.dish;
-    //     var reviews = this.state.reviews;
-    //     const dishItems = dish.map((d) => <li key={d.name}>{d.name} <span style={{display:'inline-block', width: '50px'}}></span> {d.price}$<span style={{display:'inline-block', width: '50px'}}></span>   {d.category}</li>);
-    //     const reviewItems = reviews.map((d) => <li key={d.date}>{d.date}<span style={{display:'inline-block', width: '50px'}}></span>{d.content}</li>);
-    //     var id = this.props.match.params.id;
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(dish.length / todosPerPage); i++) {
+            pageNumbers.push(i);
+        }
 
+        const renderPageNumbers = pageNumbers.map(number => {
+            return (
+              <li style={{display : 'inline-block', width: '50px', fontSize: '20px', fontWeight: 'bold'}} 
+                key={number}
+                id={number}
+                onClick={this.handleClick}
+              >
+                {number}
+              </li>
+            );
+          });
 
-    //     const selectItems = dish.map((d) => 
-    //         <option value={d.name}>Name:{d.name} Price:{d.price}$ Category:{d.category}</option>);
 
 
         var image;
         try {
             const images = require.context('../public/uploads', true);
-            console.log(images);
             image = images('./' + 'IMAGE-restaurant-' + id + '.png');
 
         } catch (err) {
             const images = require.context('../public/uploads', true);
-            console.log(images);
             image = images('./' + 'IMAGE-restaurant-default' + '.png');
         }
 
@@ -164,7 +179,23 @@ class Page extends Component{
                     <h3>Address : {location}</h3>
                     <br></br>
                     <h3>All Dishes: </h3>
-                    <h3>{dishItems}</h3>
+                    {/* <h3>{dishItems}</h3> */}
+
+                    <div>
+                        <ul>
+                        {renderTodos}
+                        </ul>
+                        <ul id="page-numbers" style={{display : 'inline-block', color: 'blue'}} >
+                        {renderPageNumbers}
+                        </ul>
+                    </div>
+                    <button onClick = {this.placeOrder} type="submit" class="btn btn-primary">Place Order</button>
+
+                    <div class="form-group">
+                        <input onChange = {this.reviewChangeHandler} type="text" class="form-control" name="review" placeholder="Add Reviews"/>
+                    </div> 
+                    <button onClick = {this.addReview} type="submit" class="btn btn-primary">Add</button>
+                    {reviewItems}
                 </div>  
              
             </div> 

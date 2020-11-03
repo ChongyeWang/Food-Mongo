@@ -1,20 +1,21 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
+import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
-
-//Define a Login Component
+const mapStyles = {
+    width: '80%',
+    height: '100%',
+};
+  
 class RestaurantHome extends Component{
-
-
     constructor(){
         super();
         this.state = {
             res: [],
-            pos: []
+            pos: [],
+            search: []
         }
-
-
     }  
 
     //get the data from backend  
@@ -37,13 +38,36 @@ class RestaurantHome extends Component{
             res: response.data,
             pos: pos
         });
-
-        console.log(response.data[0]);
         
-    });
+        });
 
     }
 
+    
+    KeyChangeHandler = (e) => {
+        const data = {
+            keyword : e.target.value,
+        }
+      
+        axios.post('/restaurant/search-all', data)
+        .then(response => {
+          console.log(response.data);
+          this.setState({
+            search: response.data
+  
+          });
+        }) 
+    }
+
+    displayMarkers = () => {
+        return this.state.pos.map((store, index) => {
+          return <Marker key={index} id={index} position={{
+           lat: store.latitude,
+           lng: store.longitude
+         }}
+         onClick={() => console.log("You clicked me!")} />
+        })
+      }
 
 
     render(){
@@ -53,31 +77,42 @@ class RestaurantHome extends Component{
             <span style={{display:'inline-block', width: '50px'}}></span>{d.phone}
 
         </div>);
+
+        var search = this.state.search;
+        const searchItems = search.map((d) => <div key={d._id} style={{marginLeft: '200px', marginTop: '10px'}}>
+            <a href={'/restaurant-page/' + d._id}>{d.name}</a>
+            <span style={{display:'inline-block', width: '50px'}}></span>{d.phone}
+
+        </div>);
 ;
 
         return(
             <div>
+                <div class="" style={{marginTop:'30px', width:'500px', marginLeft: '200px'}}>
+                    <h3 style={{fontWeight: 'bold'}}>Search Restaurant</h3>
+                    <div class="panel">
+                    </div>
+                    <div class="form-group">
+                        <input onChange = {this.KeyChangeHandler} type="text" class="form-control" name="key" placeholder="Search with restaurant name, location, dish name"/>
+                    </div> 
+                </div>
+                <h4>{searchItems}</h4>
+
+                <h3 style={{fontWeight: 'bold', marginLeft: '200px'}}>All Restaurants</h3>
                 <h4>{listItems}</h4>
-                {/* <div style={{marginLeft: '110px', marginTop: '10px'}}>
 
-                    <div class="column" style={{width: "30%"}}>
-                        <img src={image} alt="Logo" style={{width:'150px'}}/> 
-                        </div>    
-  
-
+                <div style={{marginTop:'30px',marginLeft: '200px'}}>
+                    <h4>View Restaurants on Map</h4>
+                    <Map
+                        google={this.props.google}
+                        zoom={8}
+                        style={mapStyles}
+                        initialCenter={{ lat: 37.333, lng: -121.886}}
+                        >
+                        {this.displayMarkers()}
+                    </Map>
+                </div>
                         
-                    <form onSubmit={this.onFormSubmit}>
-                        <h3>Update Profile Picture</h3>
-                        <input type="file" name="myImage" onChange= {this.onChange} />
-                        <button type="submit">Upload</button>
-                    </form>
-
-                    <h3>Restaurant Name : {name}</h3>
-                    <h3>Email : {email}</h3>
-                    <h3>Phone : {phone}</h3>
-                    <h3>Address : {location}</h3>
-                </div>   */}
-             
             </div> 
 
 
@@ -86,4 +121,7 @@ class RestaurantHome extends Component{
 }
 
 
-export default RestaurantHome;
+export default  GoogleApiWrapper({
+    apiKey: 'AIzaSyCgPAURPD6hyNrsQf1qqa2VoRicjwqJjBk'
+  })(RestaurantHome);
+// export default RestaurantHome;

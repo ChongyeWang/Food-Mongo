@@ -19,12 +19,13 @@ class Register extends Component{
             phone: "",
             web : "",
             like : "",
+            address: "",
             authFlag : false,
             message : false
         }
         
     }
-    //Call the Will Mount to set the auth Flag to false
+
     componentWillMount(){
         this.setState({
             authFlag : false
@@ -67,6 +68,12 @@ class Register extends Component{
         })
     }
 
+    addressChangeHandler = (e) => {
+        this.setState({
+            address : e.target.value
+        })
+    }
+
     //submit Login handler to send a request to the node backend
     submitLogin = (e) => {
         var headers = new Headers();
@@ -79,16 +86,11 @@ class Register extends Component{
             phone : this.state.phone,
             web : this.state.web,
             like : this.state.like,
-
+            address : this.state.address,
         }
         //set the with credentials to true
         axios.defaults.withCredentials = true;
         this.props.registerUser({ 'Username': this.state.username });
-
-         
-    // fetch('/users')
-    //   .then((response) => response.json())
-    //   .then((data) => console.log('This is your data', data));
 
 
         fetch('/users/register', {
@@ -109,10 +111,6 @@ class Register extends Component{
         .catch((error) => {
             console.log("error");
         })
-        
-        // const content = rawResponse.json();
-        // console.log(111)
-        // console.log(content);
 
     }
 
@@ -158,6 +156,9 @@ class Register extends Component{
 
                                 <div class="form-group">
                                     <input onChange = {this.likeChangeHandler} type="text" class="form-control" name="like" placeholder="Things Love"/>
+                                </div>
+                                <div class="form-group">
+                                    <input onChange = {this.addressChangeHandler} type="text" class="form-control" name="address" placeholder="Address"/>
                                 </div>
                                 <button onClick = {this.submitLogin} class="btn btn-primary">Register</button>                 
                         </div>

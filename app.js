@@ -10,14 +10,11 @@ const bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 var restaurantRouter = require('./routes/restaurant');
+var eventRouter = require('./routes/event');
 
 var cors = require('cors');
 
-
-
 var app = express();
-
-
 
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({extended : false}));
@@ -71,10 +68,7 @@ try{
             console.log('[kafka-producer -> '+kafka_topic+']: connection errored');
             throw err;
           });
-
-
        
-
         mongoose.connect(secrets.mongo_connection, options)
 
           .then((err,res) => {
@@ -98,6 +92,7 @@ catch(e) {
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 app.use('/restaurant', restaurantRouter);
+app.use('/event', eventRouter);
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {

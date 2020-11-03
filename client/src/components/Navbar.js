@@ -11,7 +11,6 @@ class Nav extends Component {
         
         return(
             <div>
-
                 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
                   <a class="navbar-brand" href="">Foooood!</a>
                   
@@ -19,6 +18,8 @@ class Nav extends Component {
                   <a class="nav-item nav-link"><Link to="/users/register" style={{color:'white'}}>Register</Link></a>
                   <a class="nav-item nav-link"><Link to="/users/login" style={{color:'white'}}>Login</Link></a>
                   <a class="nav-item nav-link"><Link to="/restaurant/login" style={{color:'white'}}>Restaurant Login</Link></a>
+                  <a class="nav-item nav-link"><Link to="/users/profile" style={{color:'white'}}>Profile</Link></a>
+                  <a class="nav-item nav-link"><Link to="/restaurant/profile" style={{color:'white'}}>Setting</Link></a>
                   <a class="nav-item nav-link"><Link to="/logout" style={{color:'white'}}>Logout</Link></a>
 
                 </nav>
