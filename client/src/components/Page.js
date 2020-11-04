@@ -244,7 +244,7 @@ class Page extends Component{
                     </div>
                     <button onClick = {this.placeOrder} type="submit" class="btn btn-primary">Place Order</button>
 
-                    <div class="form-group">
+                    <div class="form-group" style={{marginTop:'30px'}}>
                         <input onChange = {this.reviewChangeHandler} type="text" class="form-control" name="review" placeholder="Add Reviews"/>
                     </div> 
                     <button onClick = {this.addReview} type="submit" class="btn btn-primary">Add</button>

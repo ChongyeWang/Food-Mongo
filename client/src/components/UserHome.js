@@ -136,11 +136,11 @@ class UserHome extends Component{
 
         return(
             <div>
-                <div class="" style={{marginTop:'30px', width:'500px', marginLeft: '200px'}}>
+                <div class="" style={{marginTop:'30px', width:'700px', marginLeft: '200px'}}>
                     <h3 style={{fontWeight: 'bold'}}>Search User</h3>
                     <div class="panel">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style={{ width:'500px'}}>
                         <input onChange = {this.KeyChangeHandler} type="text" class="form-control" name="key" placeholder="Search with user name, location"/>
                     </div> 
                     

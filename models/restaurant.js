@@ -24,6 +24,7 @@ var RestaurantSchema = new mongoose.Schema({
         userId: { type: String },
         content: { type: String },
         status: { type: String },
+        date: { type: String },
       }
     ],
 

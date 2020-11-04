@@ -17,6 +17,7 @@ class RestaurantPage extends Component{
             currentPage: 1,
             todosPerPage: 3,
             search: [],
+            orig:[]
         }
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -37,7 +38,8 @@ class RestaurantPage extends Component{
               phone: data.data.phone,
               location: data.data.location,
               dish: data.data.dish,
-              order: data.data.order
+              order: data.data.order,
+              orig : data.data.order
           });
 
         })
@@ -63,7 +65,7 @@ class RestaurantPage extends Component{
       
         axios.post('/restaurant/update_order', data)
             .then(response => {
-                alert("Order Placed!");
+                alert("Updated!");
             })
       }
 
@@ -108,6 +110,54 @@ class RestaurantPage extends Component{
 
     }
 
+    pending = (e) =>{
+        var data = this.state.orig;
+        var result = []
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].status === 'Pending') {
+                result.push(data[i]);
+            }
+        }
+        this.setState({
+            order: result
+
+        });
+    }
+
+    deliver = (e) =>{
+        var data = this.state.orig;
+        var result = []
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].status === 'Delivered') {
+                result.push(data[i]);
+            }
+        }
+        this.setState({
+            order: result
+
+        });
+    }
+
+    all = (e) =>{
+        this.setState({
+            order: this.state.orig
+
+        });
+    }
+
+    asc = (e) => {
+        this.setState({
+            order: this.state.order.sort((a, b) => (a.date > b.date) ? 1 : -1)
+        });
+        
+      }
+  
+      desc = (e) => {
+        this.setState({
+            order: this.state.order.sort((a, b) => (a.date > b.date) ? -1 : 1)
+        });
+      }
+
 
     render(){
         var name = this.state.name;
@@ -123,7 +173,7 @@ class RestaurantPage extends Component{
         <li key={d.userId}>
             <a href={'/users/profile/' + d.userId}>View user profile</a>
             <span style={{display:'inline-block', width: '50px'}}></span> 
-            {d.content}$
+            {d.content}
             <span style={{display:'inline-block', width: '50px'}}></span>   
             {d.status}
         </li>);
@@ -162,10 +212,11 @@ class RestaurantPage extends Component{
             return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>
             <a href={'/users/profile/' + d.userId}>View user profile</a>
             <span style={{display:'inline-block', width: '50px'}}></span> 
-            {d.content}$
+            {d.content}
             <span style={{display:'inline-block', width: '50px'}}></span>   
             {d.status}
             <span style={{marginRight: '20px'}}></span>
+            {d.date}
             <button onClick = {() => {this.submitEvent(d._id)}} class="btn btn-primary">Update Status</button> 
             </li>;
             
@@ -222,6 +273,11 @@ class RestaurantPage extends Component{
                         {renderPageNumbers}
                         </ul>
                     </div>
+                    <button onClick = {this.pending} class="btn btn-primary">Show Pending</button> 
+                    <button onClick = {this.deliver} class="btn btn-primary">Show Delivered</button> 
+                    <button onClick = {this.all} class="btn btn-primary">Show All</button> 
+                    <button onClick =  {this.asc} class="btn btn-primary">Ascending</button> 
+                    <button onClick = {this.desc} class="btn btn-primary">Descending</button> 
 
                     <div class="" style={{marginTop:'30px', width:'300px'}}>
                         <h3 style={{fontWeight: 'bold'}}>Search Order</h3>

@@ -14,9 +14,18 @@ class RestaurantHome extends Component{
         this.state = {
             res: [],
             pos: [],
-            search: []
+            search: [],
+            currentPage: 1,
+            todosPerPage: 3,
         }
+        this.handleClick = this.handleClick.bind(this);
     }  
+
+    handleClick(event) {
+        this.setState({
+            currentPage: Number(event.target.id)
+        });
+    }
 
     //get the data from backend  
     componentDidMount(){
@@ -84,6 +93,42 @@ class RestaurantHome extends Component{
             <span style={{display:'inline-block', width: '50px'}}></span>{d.phone}
 
         </div>);
+
+
+        var currentPage = this.state.currentPage;
+        var todosPerPage = this.state.todosPerPage;
+
+        var res = this.state.res;
+
+        const indexOfLastTodo = currentPage * todosPerPage;
+        const indexOfFirstTodo = indexOfLastTodo - todosPerPage;
+        const currentTodos = res.slice(indexOfFirstTodo, indexOfLastTodo);
+
+        const renderTodos = currentTodos.map((d, index) => {
+        return <li style={{fontSize: '25px', fontWeight: 'bold', marginLeft:'200px'}} key={index}>
+        <a href={'/restaurant-page/' + d._id}>{d.username}</a>
+        <span style={{display:'inline-block', width: '50px'}}></span> {d.email} 
+
+        </li>;
+        });
+
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(res.length / todosPerPage); i++) {
+            pageNumbers.push(i);
+        }
+
+        const renderPageNumbers = pageNumbers.map(number => {
+        return (
+            <li style={{display : 'inline-block', width: '50px', fontSize: '20px', fontWeight: 'bold'}} 
+            key={number}
+            id={number}
+            onClick={this.handleClick}
+            >
+            {number}
+            </li>
+        );
+        
+        });
 ;
 
         return(
@@ -99,10 +144,21 @@ class RestaurantHome extends Component{
                 <h4>{searchItems}</h4>
 
                 <h3 style={{fontWeight: 'bold', marginLeft: '200px'}}>All Restaurants</h3>
-                <h4>{listItems}</h4>
+                {/* <h4>{listItems}</h4> */}
 
-                <div style={{marginTop:'30px',marginLeft: '200px'}}>
-                    <h4>View Restaurants on Map</h4>
+                    <ul>
+                    {renderTodos}
+                    </ul>
+                    <ul id="page-numbers" style={{display : 'inline-block', color: 'blue'}} >
+                    <div style={{ marginLeft:'200px'}}>
+                    {renderPageNumbers}
+                    </div>
+                    </ul>
+
+                <div style={{marginLeft: '200px'}}>
+                    <button onClick = {this.pending} class="btn btn-primary">Filter by Pickup</button> 
+                    <button onClick = {this.deliver} class="btn btn-primary">Filter by Deliver</button> 
+                    <h4 style={{marginTop:'30px'}}>View Restaurants on Map</h4>
                     <Map
                         google={this.props.google}
                         zoom={8}

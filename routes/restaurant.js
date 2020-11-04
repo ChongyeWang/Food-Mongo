@@ -188,15 +188,18 @@ router.post('/place_order', (req, res) => {
 	var restaurantId = req.body.restaurantId;
 	var order = req.body.order;
 
-	console.log(userId);
-	console.log(restaurantId);
-	console.log(order);
+	var today = new Date();
+	var dd = String(today.getDate()).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+	var yyyy = today.getFullYear();
+
+	today = yyyy + '-' + mm + '-' + dd;
     Restaurant.update(
 		{ _id: restaurantId },
 		{ 
 			$push: 
 			{ 
-				order: {"userId": userId, "content": order, "status": "Pending"}
+				order: {"userId": userId, "content": order, "status": "Pending", "date": today}
 				
 			} 
 		},
