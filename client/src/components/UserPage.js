@@ -13,11 +13,12 @@ class UserPage extends Component{
             phone: "",
             things: "",
             address: "",
-            file : null
+            file : null,
+            message : "",
         }
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onChange = this.onChange.bind(this);
-
+        
     }  
 
     //get the data from backend  
@@ -67,6 +68,7 @@ class UserPage extends Component{
     }
 
 
+
     render(){
         var name = this.state.name;
         var email = this.state.email;
@@ -79,12 +81,10 @@ class UserPage extends Component{
         var image;
         try {
             const images = require.context('../public/uploads', true);
-            console.log(images);
             image = images('./' + 'IMAGE-user-' + id + '.png');
 
         } catch (err) {
             const images = require.context('../public/uploads', true);
-            console.log(images);
             image = images('./' + 'IMAGE-user-default' + '.png');
         }
 
@@ -110,6 +110,9 @@ class UserPage extends Component{
                     <h3>Phone : {phone}</h3>
                     <h3>Address : {address}</h3>
                     <h3>Things Love : {things}</h3>
+
+
+                   
 
                 </div>  
              

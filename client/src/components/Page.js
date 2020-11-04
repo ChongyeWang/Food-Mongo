@@ -17,11 +17,14 @@ class Page extends Component{
             currentPage: 1,
             todosPerPage: 3,
             review: "",
-            reviews: []
+            reviews: [],
+            message: "",
+            history : []
 
         }
         this.handleClick = this.handleClick.bind(this);
         this.placeOrder = this.placeOrder.bind(this);
+        this.message = this.message.bind(this);
     }  
 
     handleClick(event) {
@@ -51,6 +54,21 @@ class Page extends Component{
         .catch((error) => {
             console.log(error);
         })
+
+        const data = {
+            userId: localStorage.getItem("user_id"),
+            restaurantId :  this.props.match.params.id,
+        }
+       
+
+        axios.post("/restaurant/getMessage", data)
+            .then((response) => {
+                console.log(response.data);
+                this.setState({
+                    history: response.data
+                });
+            }).catch((error) => {
+        });
 
     }
     submitEvent = (id) => {
@@ -96,6 +114,33 @@ class Page extends Component{
             alert("Review Added!");
         })
     }
+
+
+    message(e){
+        e.preventDefault();
+        const data = {
+            restaurantId: this.props.match.params.id,
+            userId : localStorage.getItem("user_id"),
+            message : this.state.message
+        }
+        console.log(data)
+       
+
+        axios.post("/users/message", data)
+            .then((response) => {
+                alert("Message Sent!");
+                console.log(response.data);
+            }).catch((error) => {
+        });
+    }
+
+    KeyChangeHandler = (e) => {
+        console.log(e.target.value);
+        this.setState({
+            message: e.target.value
+        });
+  
+      }
 
 
     render(){
@@ -166,6 +211,14 @@ class Page extends Component{
             image = images('./' + 'IMAGE-restaurant-default' + '.png');
         }
 
+        var history = this.state.history;
+
+        var historyItems  = history.map((d) => 
+        <div style={{fontSize: '25px', fontWeight: 'bold'}} key={d.content}>
+        {d.content} 
+        <span style={{display:'inline-block', width: '50px'}}></span> {d.date} 
+        </div>);
+
         return(
             <div>
                 <div style={{marginLeft: '110px', marginTop: '10px'}}>
@@ -196,6 +249,16 @@ class Page extends Component{
                     </div> 
                     <button onClick = {this.addReview} type="submit" class="btn btn-primary">Add</button>
                     {reviewItems}
+
+
+
+                    <div class="form-group" style={{marginTop:'30px'}}>
+
+                        <h3 style={{marginTop: '50px'}}>Message History</h3>
+                         {historyItems}
+                        <input onChange = {this.KeyChangeHandler} type="text" class="form-control" name="key" placeholder="Send Message"/>
+                        <button onClick = {this.message} class="btn btn-primary">Reply</button> 
+                    </div>  
                 </div>  
              
             </div> 

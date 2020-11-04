@@ -109,7 +109,8 @@ class UserHome extends Component{
         const currentTodos = users.slice(indexOfFirstTodo, indexOfLastTodo);
 
         const renderTodos = currentTodos.map((d, index) => {
-        return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>{d.username} 
+        return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>
+        <a href={'/user-page/' + d._id}>{d.username}</a>
         <span style={{display:'inline-block', width: '50px'}}></span> {d.email} 
         
         </li>;
@@ -153,8 +154,6 @@ class UserHome extends Component{
                     <ul id="page-numbers" style={{display : 'inline-block', color: 'blue'}} >
                     {renderPageNumbers}
                     </ul>
-
-                    
 
                 </div>       
                 <button style={{marginTop:'30px', marginLeft: '200px'}} onClick = {this.follow} class="btn btn-primary">Filter by following users</button> 

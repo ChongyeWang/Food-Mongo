@@ -46,7 +46,6 @@ class Events extends Component{
   }
 
   
-  
   KeyChangeHandler = (e) => {
       const data = {
           keyword : e.target.value,
@@ -60,7 +59,6 @@ class Events extends Component{
       });
 
       }) 
-
     }
 
   submitEvent = (id) => {

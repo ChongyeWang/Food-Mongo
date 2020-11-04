@@ -7,9 +7,9 @@ const { secret } = require('../config/secrets.js');
 const { auth } = require("../config/passport2.js");
 auth();
 
-
 const Restaurant = require("../models/restaurant.js");
 const User = require(".././models/user.js");
+const Message = require(".././models/message.js");
 
 const upload = multer({
 	storage: multer.diskStorage({
@@ -310,6 +310,57 @@ router.post('/add_review', (req, res) => {
 			}
 		}
 	) ;
+});
+
+router.post('/message', (req, res) => {
+	
+	var restaurantId = req.body.restaurantId;
+	var userId = req.body.userId;
+	var content = req.body.message;
+
+	var today = new Date();
+	// var dd = String(today.getDate()).padStart(2, '0');
+	// var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+	// var yyyy = today.getFullYear();
+	// var hours = today.getHours();
+	// var min = today.getMinutes(); 
+	// var sec = today.getSeconds();
+
+	var time = today.toLocaleString();
+
+	const message = new Message(
+	{
+		userId: userId,
+		restaurantId: restaurantId,
+		content: content,
+		date: time
+
+	});
+
+	message.save();
+	res.send({message: "ok"});
+});
+
+
+
+router.post('/getMessage', (req, res) => {
+	var restaurantId = req.body.restaurantId;
+	var userId = req.body.userId;
+	Message.find(
+		{ 
+			$and: 
+			[
+				{userId: userId},
+				{restaurantId: restaurantId}
+			]
+		}, 
+		function(err, result) {
+			if ( err ) res.status(500).end("Error Occured");
+			else {
+				res.send(JSON.stringify(result));
+			}
+		}
+	)
 });
 
 module.exports = router;

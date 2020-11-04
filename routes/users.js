@@ -23,24 +23,6 @@ module.exports = (app,producer,kafka_topic) => {
 
     app.get('/users/all', function(req, res, next) {
 
-
-        let payload = [{
-            topic : kafka_topic,
-            messages : JSON.stringify({
-                type : "DELETE_USER_POST",
-                data : {'a':1}
-            })
-        }]
-
-        producer.send(payload,(err,data) => {
-            if(err) {
-                console.log('[kafka-producer -> '+kafka_topic+']: broker update failed')
-            }
-    
-            console.log('[kafka-producer -> '+kafka_topic+']: broker update success');
-        })
-
-
         User.find({}, function(err, users) {
             console.log(users);
             res.send(JSON.stringify(users));
@@ -243,6 +225,40 @@ module.exports = (app,producer,kafka_topic) => {
                 }
             }
         ) ;
+    });
+
+
+    app.post('/users/message', function(req, res, next) {
+        var userId = req.body.userId;
+        var restaurantId = req.body.restaurantId;
+        var content = req.body.message;
+
+        var today = new Date();
+
+        var time = today.toLocaleString();
+
+        let payload = [{
+            topic : kafka_topic,
+            messages : JSON.stringify({
+                type : "SEND_MESSAGE",
+                data : {
+                    userId: userId,
+                    restaurantId: restaurantId,
+                    content: content,
+                    date: time,
+                }
+            })
+        }]
+
+        producer.send(payload,(err,data) => {
+            if(err) {
+                console.log('[kafka-producer -> '+kafka_topic+']: broker update failed')
+            }
+    
+            console.log('[kafka-producer -> '+kafka_topic+']: broker update success');
+        })
+
+        res.send({message: "ok"});
     });
 }
 

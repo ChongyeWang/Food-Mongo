@@ -6,19 +6,20 @@ const mongoose  = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
 
-// const postModel = require('./postModel');
+const Message = require("./message.js");
+const Restaurant = require(".././models/restaurant.js");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended : false}));
 
 
-        var secrets = require('./config/secrets');
-        var options = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            poolSize: 500,
-            bufferMaxEntries: 0
-        };
+var secrets = require('./config/secrets');
+var options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    poolSize: 500,
+    bufferMaxEntries: 0
+};
         
 
 try {
@@ -39,14 +40,24 @@ try {
   consumer.on('message', async function(message) {
      const consumerdata = JSON.parse(message.value);
 
-     console.log("===>",consumerdata);
+     console.log("===>",consumerdata.data);
 
-     if(consumerdata.type === 'DELETE_USER_POST'){
-         console.log(typeof(consumerdata.data));
+      // try {
+      // saveMessage.save(); 
+      //   console.log(111);
+      //   console.log(saveUser); //when success it print.
+     
+      // } catch (err) {
+      //   console.log('err' + err);
+      // }
+       
+    // let a = await Restaurant.find({}).exec().toArray();
+    // console.log(a);
+
+     if(consumerdata.type === 'SEND_MESSAGE'){
+         const saveStatus =  await Message.insertMessage(consumerdata.data);
+         console.log(saveStatus);
          
-        // const deleteStatus =  await postModel.deletePosts(consumerdata.data);
-        
-         console.log("Post Deleted Successfully");
      } 
   });
   consumer.on('error', function(err) {
@@ -57,11 +68,8 @@ catch(e) {
   console.log(e);
 }
 
-  mongoose.connect(secrets.mongo_connection, options).then((err,res) => {
-
-     console.log("mongodb is connected successfuly");
-
-     require('./routes')(app);   
+mongoose.connect(secrets.mongo_connection, options).then((err,res) => {
+    console.log("mongodb is connected successfuly");
 
  })
  .catch(err => {
