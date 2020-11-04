@@ -25,7 +25,7 @@ module.exports = (app,producer,kafka_topic) => {
 
         User.find({}, function(err, users) {
             console.log(users);
-            res.send(JSON.stringify(users));
+            res.status(200).send(JSON.stringify(users));
             
         });
     });

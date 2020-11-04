@@ -26,7 +26,11 @@ router.get('/all', function(req, res, next) {
 
 	Restaurant.find({}, function(err, users) {
 		console.log(users);
-		res.send(JSON.stringify(users));
+		res.writeHead(200,{
+			'Content-Type' : 'text/plain'
+		});
+		res.end(JSON.stringify(users));
+		// res.status(200).send(JSON.stringify(users));
 		
 	});
 
