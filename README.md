@@ -2,7 +2,7 @@
  
 ## Introduction 
 
-#### This is a yelp-like web application using Node.js MongoDB, React and Kafka. The application involves backend development and frontend development and their interactions. It involves two systems including user customer system and restaurant system. Registered restaurants can provide services including adding dishes, adding events, messaging  customers etc #### and customers can use the system to view restaurants on map, order foods, message restaurants, join events etc.
+#### This is a yelp-like web application using Node.js MongoDB, React and Kafka. The application involves backend development and frontend development and their interactions. It involves two systems including user customer system and restaurant system. Registered restaurants can provide services including adding dishes, adding events, messaging  customers etc and customers can use the system to view restaurants on map, order foods, message restaurants, join events etc.
 
 #### Customer: Register and Login. Search and view restaurants. View and register for events. Add reviews to restaurant. Update Profile and view restaurants profile. Order dishes and place order. Message Restaurants. Follow other customers.
 
@@ -21,8 +21,7 @@
 #### 4. Change into client directory and run npm start for frontend
 
 ## Why MongoDB?
-#### The mongoDB performance is generally better than MySQL. Compared to MySQL implementation, the mongoDB is more flexible and avoids multiple join operation, which greatly improves performance. Also, mongoDB allows insert great amount of data at the same time and MySQL has to insert data one by one. The MySQL requires structured data while mongoDB handles unstructured data pretty well. The mongoDB used JSON document and are more flexible and easier to implement by allowing json object and arrays, avoiding the limitation of rows and columns of tables. Also, mongoDB has many support-in and the application can be scaled easily, which can help to improve 
-performance in various aspects as well.
+#### The mongoDB performance is generally better than MySQL. Compared to MySQL implementation, the mongoDB is more flexible and avoids multiple join operation, which greatly improves performance. Also, mongoDB allows insert great amount of data at the same time and MySQL has to insert data one by one. The MySQL requires structured data while mongoDB handles unstructured data pretty well. The mongoDB used JSON document and are more flexible and easier to implement by allowing json object and arrays, avoiding the limitation of rows and columns of tables. Also, mongoDB has many support-in and the application can be scaled easily, which can help to improve performance in various aspects as well.
 
 ## Why JWT?
 #### JWT provides unique encrypted token during the request process.Therefore, when the user logged in the backend will assign a token and the client side will save it in localStorage and all request that needs authentication will be verified for  token. Previously, user log in by providing only username and password. With the middleware provided, only request that have been verified valid will be allowed. The passport will check authentication of the user before accessing the api. If the authentication fails, the next request handler will not be called. Meanwhile, the passport middleware is flexible and easy to integrate into an application and keeps the project maintainable and scalable.
