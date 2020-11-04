@@ -21,8 +21,7 @@
 #### 4. Change into client directory and run npm start for frontend
 
 ## Why MongoDB?
-#### The mongoDB performance is generally better than MySQL. Compared to MySQL implementation, the mongoDB is more flexible and avoids multiple join operation, which greatly improves performance. Also, mongoDB 
-allows insert great amount of data at the same time and MySQL has to insert data one by one. The MySQL requires structured data while mongoDB handles unstructured data pretty well. The mongoDB used JSON document and are more flexible and easier to implement by allowing json object and arrays, avoiding the limitation of rows and columns of tables. Also, mongoDB has many support-in and the application can be scaled easily, which can help to improve 
+#### The mongoDB performance is generally better than MySQL. Compared to MySQL implementation, the mongoDB is more flexible and avoids multiple join operation, which greatly improves performance. Also, mongoDB allows insert great amount of data at the same time and MySQL has to insert data one by one. The MySQL requires structured data while mongoDB handles unstructured data pretty well. The mongoDB used JSON document and are more flexible and easier to implement by allowing json object and arrays, avoiding the limitation of rows and columns of tables. Also, mongoDB has many support-in and the application can be scaled easily, which can help to improve 
 performance in various aspects as well.
 
 ## Why JWT?
