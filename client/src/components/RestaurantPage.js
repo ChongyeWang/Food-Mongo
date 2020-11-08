@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
-
+import { connect } from "react-redux";
+import { restaurantPage2 } from "../js/actions/index";
 //Define a Login Component
 class RestaurantPage extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             name : "",
             email: "",
@@ -67,6 +68,12 @@ class RestaurantPage extends Component{
             .then(response => {
                 alert("Updated!");
             })
+
+        this.props.restaurantPage2(
+            { 'RestaurantPage': this.state.name, 
+              'Order': localStorage.getItem("order"),
+              'Status': 'Delivered'
+        });
       }
 
     onChange(e) {
@@ -210,7 +217,7 @@ class RestaurantPage extends Component{
 
         const renderTodos = currentTodos.map((d, index) => {
             return <li style={{fontSize: '25px', fontWeight: 'bold'}} key={index}>
-            <a href={'/users/profile/' + d.userId}>View user profile</a>
+            <a href={'/user-page/' + d.userId}>View user profile</a>
             <span style={{display:'inline-block', width: '50px'}}></span> 
             {d.content}
             <span style={{display:'inline-block', width: '50px'}}></span>   
@@ -298,5 +305,16 @@ class RestaurantPage extends Component{
     }   
 }
 
-
-export default RestaurantPage;
+const mapStateToProps = state => ({
+    restaurantPage2: state.name 
+ });
+ 
+ function mapDispatchToProps(dispatch) {
+   return {
+    restaurantPage2: user => dispatch(restaurantPage2(user))
+   };
+ }
+ const RestaurantPageProfile2 = connect(mapStateToProps, mapDispatchToProps)(RestaurantPage);
+ export default RestaurantPageProfile2;
+ 
+// export default RestaurantPage;

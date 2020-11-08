@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
-
+import { userProfile } from "../js/actions/index";
+import { connect } from "react-redux";
 
 //Define a Login Component
 class UserPage extends Component{
@@ -65,6 +66,8 @@ class UserPage extends Component{
                 alert("The file is successfully uploaded");
             }).catch((error) => {
         });
+
+        this.props.userProfile({ 'userProfile': 'Updated User Profile' });
     }
 
 
@@ -79,6 +82,7 @@ class UserPage extends Component{
         var id = localStorage.getItem("user_id");
 
         var image;
+        console.log(111);
         try {
             const images = require.context('../public/uploads', true);
             image = images('./' + 'IMAGE-user-' + id + '.png');
@@ -111,9 +115,6 @@ class UserPage extends Component{
                     <h3>Address : {address}</h3>
                     <h3>Things Love : {things}</h3>
 
-
-                   
-
                 </div>  
              
             </div> 
@@ -123,5 +124,17 @@ class UserPage extends Component{
     }   
 }
 
+const mapStateToProps = state => ({
+    userProfile: 'Updated User Profile'
+ });
+ 
+ function mapDispatchToProps(dispatch) {
+   return {
+    userProfile: user => dispatch(userProfile(user))
+   };
+ }
+ const userdProfile = connect(mapStateToProps, mapDispatchToProps)(UserPage);
+ export default userdProfile;
+ 
 
-export default UserPage;
+// export default UserPage;

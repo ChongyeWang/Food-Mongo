@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 import jwt_decode from "jwt-decode";
+import { connect } from "react-redux";
+import { loginUser } from "../js/actions/index";
 
 //Define a Login Component
 class Login extends Component {
@@ -48,6 +50,8 @@ class Login extends Component {
             username: this.state.username,
             password: this.state.password
         }
+
+        this.props.loginUser({ 'Username': this.state.username });
 
         fetch('/users/login', {
           method: 'POST',
@@ -130,4 +134,16 @@ class Login extends Component {
     }
 }
 //export Login Component
-export default Login;
+const mapStateToProps = state => ({
+    loginedUser: state.username 
+ });
+ 
+ function mapDispatchToProps(dispatch) {
+   return {
+    loginUser: user => dispatch(loginUser(user))
+   };
+ }
+ const LoginedUser = connect(mapStateToProps, mapDispatchToProps)(Login);
+ export default LoginedUser;
+ 
+// export default Login;

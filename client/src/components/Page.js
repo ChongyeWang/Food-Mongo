@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
-
+import { connect } from "react-redux";
+import { restaurantPage,message1 } from "../js/actions/index";
 
 //Define a Login Component
 class Page extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             name : "",
             email: "",
@@ -55,6 +56,7 @@ class Page extends Component{
             console.log(error);
         })
 
+
         const data = {
             userId: localStorage.getItem("user_id"),
             restaurantId :  this.props.match.params.id,
@@ -88,6 +90,8 @@ class Page extends Component{
         restaurantId : restaurant_id,
         order: localStorage.getItem("order"),
     }
+
+    this.props.restaurantPage({ 'RestaurantPage': this.state.name, 'Order': localStorage.getItem("order") });
 
     axios.defaults.withCredentials = true;
     
@@ -132,6 +136,8 @@ class Page extends Component{
                 console.log(response.data);
             }).catch((error) => {
         });
+
+        this.props.message1({ 'Message:': this.state.message });
     }
 
     KeyChangeHandler = (e) => {
@@ -199,8 +205,6 @@ class Page extends Component{
             );
           });
 
-
-
         var image;
         try {
             const images = require.context('../public/uploads', true);
@@ -250,8 +254,6 @@ class Page extends Component{
                     <button onClick = {this.addReview} type="submit" class="btn btn-primary">Add</button>
                     {reviewItems}
 
-
-
                     <div class="form-group" style={{marginTop:'30px'}}>
 
                         <h3 style={{marginTop: '50px'}}>Message History</h3>
@@ -268,5 +270,17 @@ class Page extends Component{
     }   
 }
 
-
-export default Page;
+const mapStateToProps = state => ({
+    restaurantPage: state.name ,
+    message1: 'message1',
+ });
+ 
+ function mapDispatchToProps(dispatch) {
+   return {
+    restaurantPage: user => dispatch(restaurantPage(user)),
+    message1: user => dispatch(message1(user))
+   };
+ }
+ const RestaurantPageProfile = connect(mapStateToProps, mapDispatchToProps)(Page);
+ export default RestaurantPageProfile;
+ 

@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 
+import { userProfile2, message1 } from "../js/actions/index";
+import { connect } from "react-redux";
 
 //Define a Login Component
 class UserProfile extends Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             name : "",
             email: "",
@@ -34,6 +36,9 @@ class UserProfile extends Component{
               things: data.data.things,
               address: data.data.address,
           });
+
+          this.props.userProfile2({ 'User Name:': data.data.name });
+        //   this.props.userProfile2({ 'e:': 'e' });
 
         })
         .catch((error) => {
@@ -88,7 +93,6 @@ class UserProfile extends Component{
             targetId: this.props.match.params.id,
             userId : localStorage.getItem("user_id")
         }
-       
 
         axios.post("/users/follow", data)
             .then((response) => {
@@ -105,6 +109,8 @@ class UserProfile extends Component{
             restaurantId : localStorage.getItem("restaurant_id"),
             message : this.state.message
         }
+
+        this.props.message1({ 'Message:': this.state.message });
        
 
         axios.post("/restaurant/message", data)
@@ -159,7 +165,6 @@ class UserProfile extends Component{
                     </div>    
 
                     <button onClick = {this.follow} class="btn btn-primary">Follow</button> 
-                   
 
                     <h3>Userame : {name}</h3>
                     <h3>Email : {email}</h3>
@@ -179,4 +184,19 @@ class UserProfile extends Component{
     }   
 }
 
-export default UserProfile;
+const mapStateToProps = state => ({
+    userProfile2: 'View User Profile',
+    message1: 'message1',
+ });
+ 
+ function mapDispatchToProps(dispatch) {
+   return {
+    userProfile2: user => dispatch(userProfile2(user)),
+    message1: user => dispatch(message1(user))
+   };
+ }
+ const userdProfile2 = connect(mapStateToProps, mapDispatchToProps)(UserProfile);
+ export default userdProfile2;
+ 
+
+ 

@@ -1,2 +1,8 @@
 
 export const REGISTER_USER = "REGISTER_USER";
+export const LOGIN_USER = "LOGIN_USER";
+export const USER_PROFILE = "USER_PROFILE";
+export const USER_PROFILE2 = "USER_PROFILE";
+export const RESTAURANT_PAGE = "RESTAURANT_PAGE";
+export const RESTAURANT_PAGE2 = "RESTAURANT_PAGE2";
+export const MESSAGE_1 = "MESSAGE_1";
